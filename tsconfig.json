@@ -22,5 +22,12 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+
+  "tabAutocompleteModel": {
+    "title": "Codestral",
+    "provider": "mistral",
+    "model": "codestral-latest",
+    "apiKey": "09sTj5pTuUbKcQGsShQC8gtftKP7R8VF"
+  }
 }
