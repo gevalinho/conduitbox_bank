@@ -7,17 +7,19 @@ const Home = () => {
   return (
     <div className="home">
       <div className="home-content">
-        <HeaderBox
-          type="greeting"
-          title="Welcome"
-          user={loggin?.firstName || "Guest"}
-          subtext="Access and manage your transactions"
-        />
-        <TotalBalanceBox
-          accounts={[]}
-          totalBanks={1}
-          totalCurrentBalance={12345000}
-        />
+        <header className="home-header">
+          <HeaderBox
+            type="greeting"
+            title="Welcome"
+            user={loggin?.firstName || "Guest"}
+            subtext="Access and manage your transactions"
+          />
+          <TotalBalanceBox
+            accounts={[]}
+            totalBanks={1}
+            totalCurrentBalance={12345000}
+          />
+        </header>
       </div>
     </div>
   );

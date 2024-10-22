@@ -122,7 +122,8 @@
   }
 
   .total-balance-chart {
-    @apply flex size-full max-w-[100px] items-center sm:max-w-[120px];
+    /* @apply flex size-full max-w-[100px] items-center sm:max-w-[120px]; */
+    @apply flex size-full max-w-[100px];
   }
 
   .total-balance-label {
