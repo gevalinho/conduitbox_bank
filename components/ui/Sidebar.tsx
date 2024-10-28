@@ -270,7 +270,9 @@ const Sidebar = ({ user }: SiderbarProps) => {
                       className="h-8 w-8 rounded-full bg-gray-50"
                     />
                     <span className="sr-only">Your profile</span>
-                    <span aria-hidden="true">Tom Cook</span>
+                    <span aria-hidden="true">
+                      {user.firstName} {user.lastName}
+                    </span>
                   </a>
                 </li>
               </ul>
