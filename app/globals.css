@@ -113,19 +113,12 @@
     @apply no-scrollbar flex w-full flex-1 flex-col gap-8 px-5 sm:px-8 py-7 lg:py-12 xl:max-h-screen xl:overflow-y-scroll;
   }
 
-  /* @media (max-width: 640px) {
-    .home-content {
-      width: 100%;
-      padding: 0;
-    }
-  } */
-
   .home-header {
     @apply flex flex-col justify-between gap-8;
   }
 
   .total-balance {
-    @apply flex w-full items-center gap-4 rounded-xl border border-gray-200 p-4 shadow-chart sm:gap-6 sm:p-6;
+    @apply flex w-full items-center gap-4 rounded-xl border border-gray-200 p-4 shadow-chart sm:gap-6 sm:p-6 sm:min-w-[120px];
   }
 
   .total-balance-chart {
@@ -334,7 +327,7 @@
 
   /* Root Layout */
   .root-layout {
-    @apply flex h-16 items-center justify-between p-5 shadow-creditCard sm:p-8 md:hidden;
+    @apply h-16 items-center justify-between p-5 shadow-creditCard sm:p-8 md:hidden;
   }
 
   /* Bank Info */
