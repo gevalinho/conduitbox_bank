@@ -1,4 +1,5 @@
 import { formatAmount } from "@/lib/utils";
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
@@ -6,7 +7,7 @@ const BankCard = ({
   accounts,
   showBalance = true,
   userName,
-}: BankCardProps) => {
+}: CreditCardProps) => {
   return (
     <div className="flex fles-col">
       <Link href={"/"} className="bank-card">
@@ -28,6 +29,21 @@ const BankCard = ({
               ●●●● ●●●● ●●●● <span className="text-16">1234</span>
             </p>
           </article>
+        </div>
+        <div className="bank-card_icon">
+          <Image
+            src="/icons/Paypass.svg"
+            width={20}
+            height={20}
+            alt="paypass"
+          />
+          <Image
+            src="/icons/mastercard.svg"
+            width={20}
+            height={20}
+            alt="mastercard"
+            className="ml-5"
+          />
         </div>
       </Link>
     </div>
