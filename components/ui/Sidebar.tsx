@@ -20,36 +20,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
-// import { usePathname } from "next/navigation";
-
-const navigation = [
-  { name: "Dashboard", href: "#", icon: HomeIcon, current: true },
-  {
-    name: "My Banks",
-    href: "#",
-    icon: DocumentCurrencyDollarIcon,
-    current: false,
-  },
-  // { name: "Projects", href: "#", icon: FolderIcon, current: false },
-  {
-    name: "Transaction History",
-    href: "#",
-    icon: CalendarIcon,
-    current: false,
-  },
-  {
-    name: "Payment Transfer",
-    href: "#",
-    icon: CurrencyDollarIcon,
-    current: false,
-  },
-  { name: "Connect Bank", href: "#", icon: CreditCardIcon, current: false },
-];
-const teams = [
-  { id: 1, name: "Heroicons", href: "#", initial: "H", current: false },
-  { id: 2, name: "Tailwind Labs", href: "#", initial: "T", current: false },
-  { id: 3, name: "Workcation", href: "#", initial: "W", current: false },
-];
+import { usePathname } from "next/navigation";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -57,7 +28,41 @@ function classNames(...classes) {
 
 const Sidebar = ({ user }: SiderbarProps) => {
   // const [sidebarOpen, setSidebarOpen] = useState(false);
-  // const pathname = usePathname();
+  const pathname = usePathname();
+
+  const navigation = [
+    { name: "Dashboard", href: "/", icon: HomeIcon, current: pathname === "/" },
+    {
+      name: "My Banks",
+      href: "my-banks",
+      icon: DocumentCurrencyDollarIcon,
+      current: pathname === "/my-banks",
+    },
+    // { name: "Projects", href: "#", icon: FolderIcon, current: false },
+    {
+      name: "Transaction History",
+      href: "/transaction-history",
+      icon: CalendarIcon,
+      current: pathname === "/transaction-history",
+    },
+    {
+      name: "Payment Transfer",
+      href: "/payment-transfer",
+      icon: CurrencyDollarIcon,
+      current: pathname === "/payment-transfer",
+    },
+    {
+      name: "Connect Bank",
+      href: "/connect-bank",
+      icon: CreditCardIcon,
+      current: pathname === "/connect-bank",
+    },
+  ];
+  const teams = [
+    { id: 1, name: "Heroicons", href: "#", initial: "H", current: false },
+    { id: 2, name: "Tailwind Labs", href: "#", initial: "T", current: false },
+    { id: 3, name: "Workcation", href: "#", initial: "W", current: false },
+  ];
   return (
     <>
       <nav className="flex flex-col gap-4">
