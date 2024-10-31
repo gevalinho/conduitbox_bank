@@ -29,18 +29,33 @@ export default function Sigin() {
         <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
           <div className="mx-auto w-full max-w-sm lg:w-96">
             <div>
-              <Link href="/">
+              {/* <Link href="/">
                 <Image
                   src="/icons/conduitbank.png"
                   width={30}
                   height={30}
                   alt="logo"
                 />
-              </Link>
+              </Link> */}
+              <div className="flex h-16 shrink-0 items-center pl-12">
+                <Link href="/">
+                  <Image
+                    src="/icons/conduitbank.png"
+                    width={30}
+                    height={30}
+                    alt="logo"
+                  />
+                </Link>
+                <Link href="/">
+                  <div>
+                    <h1 className="text-2xl font-bold px-2">Conduit Bank</h1>
+                  </div>
+                </Link>
+              </div>
               <h2 className="mt-8 text-2xl/9 font-bold tracking-tight text-gray-900">
                 Sign in to your account
               </h2>
-              <p className="mt-2 text-sm/6 text-gray-500">
+              {/* <p className="mt-2 text-sm/6 text-gray-500">
                 Not a member?{" "}
                 <a
                   href="#"
@@ -48,7 +63,7 @@ export default function Sigin() {
                 >
                   Start a 14 day free trial
                 </a>
-              </p>
+              </p> */}
             </div>
 
             <div className="mt-10">
@@ -68,7 +83,7 @@ export default function Sigin() {
                         type="email"
                         required
                         autoComplete="email"
-                        className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                        className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                       />
                     </div>
                   </div>
@@ -80,14 +95,14 @@ export default function Sigin() {
                     >
                       Password
                     </label>
-                    <div className="mt-2">
+                    <div className="mt-2 ">
                       <input
                         id="password"
                         name="password"
                         type="password"
                         required
                         autoComplete="current-password"
-                        className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                        className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                       />
                     </div>
                   </div>
@@ -193,6 +208,17 @@ export default function Sigin() {
                     <span className="text-sm/6 font-semibold">GitHub</span>
                   </a>
                 </div>
+              </div>
+              <div className="relative mt-6">
+                <p className="mt-2 text-sm/6 text-gray-500">
+                  Don't have an account?{" "}
+                  <Link
+                    href="/sign-up"
+                    className="font-semibold text-indigo-600 hover:text-indigo-500"
+                  >
+                    SignUp
+                  </Link>
+                </p>
               </div>
             </div>
           </div>
