@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -17,7 +18,7 @@ const AuthForm = ({ type }: { type: string }) => {
                   alt="logo"
                 />
               </Link> */}
-          <div className="flex h-16 shrink-0 items-center pl-12">
+          <div className="flex h-16 pt-10 shrink-0 items-center pl-12">
             <Link href="/">
               <Image
                 src="/icons/conduitbank.png"
@@ -34,7 +35,7 @@ const AuthForm = ({ type }: { type: string }) => {
           </div>
           {user ? (
             "Link Account"
-          ) : type === "sign-in  " ? (
+          ) : type === "sign-in" ? (
             <h2 className="mt-8 text-2xl/9 font-bold tracking-tight text-gray-900">
               Sign in to your account
             </h2>
@@ -58,6 +59,158 @@ const AuthForm = ({ type }: { type: string }) => {
         <div className="mt-10">
           <div>
             <form action="#" method="POST" className="space-y-6">
+              {type === "sign-up" && (
+                <>
+                  {/* new user name input  */}
+
+                  {/* end of code */}
+                  <div className="flex gap-2 w-full">
+                    <div className="w-full">
+                      <label
+                        htmlFor="email"
+                        className="block text-sm/6 font-medium text-gray-900"
+                      >
+                        FirstName
+                      </label>
+                      <div className="mt-2">
+                        <input
+                          id="firstname"
+                          name="firstname"
+                          type="firstname"
+                          required
+                          autoComplete="firstname"
+                          placeholder="Geva-eval"
+                          className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="w-full">
+                      <label
+                        htmlFor="lastname"
+                        className="block text-sm/6 font-medium text-gray-900"
+                      >
+                        LastName
+                      </label>
+                      <div className="mt-2">
+                        <input
+                          id="lastname"
+                          name="lastname"
+                          type="lastname"
+                          required
+                          autoComplete="lastname"
+                          placeholder="Egbe"
+                          className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="address"
+                      className="block text-sm/6 font-medium text-gray-900"
+                    >
+                      Street address
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        id="address"
+                        name="address"
+                        type="address"
+                        required
+                        autoComplete="address"
+                        placeholder="Address"
+                        className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2 w-full">
+                    <div className="w-full">
+                      <label
+                        htmlFor="state"
+                        className="block text-sm/6 font-medium text-gray-900"
+                      >
+                        State
+                      </label>
+                      <div className="mt-2">
+                        <input
+                          id="state"
+                          name="State"
+                          type="sate"
+                          required
+                          autoComplete="state"
+                          placeholder="State"
+                          className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="w-full">
+                      <label
+                        htmlFor="code"
+                        className="block text-sm/6 font-medium text-gray-900"
+                      >
+                        Postal Code
+                      </label>
+                      <div className="mt-2">
+                        <input
+                          id="code"
+                          name="code"
+                          type="code"
+                          required
+                          autoComplete="postal code"
+                          placeholder="ex:11101"
+                          className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2 w-full">
+                    <div className="w-full">
+                      <label
+                        htmlFor="date"
+                        className="block text-sm/6 font-medium text-gray-900"
+                      >
+                        Date of birth
+                      </label>
+                      <div className="mt-2">
+                        <input
+                          id="dob"
+                          name="dob"
+                          type="dob"
+                          required
+                          autoComplete="dob"
+                          placeholder="yyyy-mm-dd"
+                          className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="w-full">
+                      <label
+                        htmlFor="ssn"
+                        className="block text-sm/6 font-medium text-gray-900"
+                      >
+                        SSN
+                      </label>
+                      <div className="mt-2">
+                        <input
+                          id="ssn"
+                          name="ssn"
+                          type="ssn"
+                          required
+                          autoComplete="ssn"
+                          placeholder="123-45-6789"
+                          className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+
               <div>
                 <label
                   htmlFor="email"
@@ -72,6 +225,7 @@ const AuthForm = ({ type }: { type: string }) => {
                     type="email"
                     required
                     autoComplete="email"
+                    placeholder="example@gmail.com"
                     className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                   />
                 </div>
@@ -91,6 +245,7 @@ const AuthForm = ({ type }: { type: string }) => {
                     type="password"
                     required
                     autoComplete="current-password"
+                    placeholder="********"
                     className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                   />
                 </div>
@@ -194,7 +349,7 @@ const AuthForm = ({ type }: { type: string }) => {
               </a>
             </div>
           </div>
-          {type === "sign-in  " ? (
+          {type === "sign-in" ? (
             <div className="relative mt-6">
               <p className="mt-2 text-sm/6 text-gray-500">
                 Don&apos;t have an account?{" "}
@@ -214,7 +369,7 @@ const AuthForm = ({ type }: { type: string }) => {
                   href="/sign-in"
                   className="font-semibold text-indigo-600 hover:text-indigo-500"
                 >
-                  SignUp
+                  SignIn
                 </Link>
               </p>
             </div>
