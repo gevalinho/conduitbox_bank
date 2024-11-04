@@ -70,6 +70,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
     console.log("Form Data:", data);
     // Handle form submission logic here (e.g., API calls)
     reset();
+    setIsLoading(false);
   };
 
   return (
@@ -386,7 +387,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
                     type="submit"
                     className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
-                    Create account{" "}
+                    <span hidden={isLoading}>Create account </span>
                     {isLoading && (
                       <div className="flex items-center px-2">
                         <Loader2 size={20} className="animate-spin " /> &nbsp;
@@ -401,7 +402,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
                     type="submit"
                     className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
-                    Sign in{" "}
+                    <span hidden={isLoading}>Sign in </span>
                     {isLoading && (
                       <div className="flex items-center px-2">
                         <Loader2 size={20} className="animate-spin " /> &nbsp;
