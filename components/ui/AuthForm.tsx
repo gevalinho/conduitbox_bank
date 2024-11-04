@@ -2,22 +2,80 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-// import { string } from "zod";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+// import { FieldErrors } from "react-hook-form";
+// import { authFormSchema } from "@/lib/utils";
 
-const AuthForm = ({ type }: { type: string }) => {
+// interface FormValues {
+//   firstname: string;
+//   lastname: string;
+//   address: string;
+//   state: string;
+//   code: string;
+//   dob: Date;
+//   ssn: string;
+//   email: string;
+//   password: string;
+//   // Add other form field types as needed
+// }
+
+// Props for AuthForm
+interface AuthFormProps {
+  type: "sign-in" | "sign-up";
+}
+
+// Define the Zod schema for validation
+const signInSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters long"),
+});
+
+const signUpSchema = z.object({
+  firstname: z.string().nonempty("First name is required"),
+  lastname: z.string().nonempty("Last name is required"),
+  address: z.string().nonempty("Address is required"),
+  state: z.string().nonempty("Country is required"),
+  code: z.string().regex(/^\d+$/, "Postal code must be numeric"),
+  dob: z.string().nonempty("Date of birth is required"),
+  ssn: z.string().nonempty("SSN is required"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters long"),
+});
+
+// Infer form types from the schema
+
+type FormValues = z.infer<typeof signUpSchema>;
+// type SignInFormData = z.infer<typeof signInSchema>;
+// type SignUpFormData = z.infer<typeof signUpSchema>;
+
+const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Use react-hook-form with zodResolver based on the form type
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: zodResolver(type === "sign-in" ? signInSchema : signUpSchema),
+  });
+
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
+    setIsLoading(true);
+    console.log("Form Data:", data);
+    // Handle form submission logic here (e.g., API calls)
+    reset();
+  };
+
   return (
     <div>
       <div className="mx-auto w-full max-w-sm lg:w-96">
         <div>
-          {/* <Link href="/">
-                <Image
-                  src="/icons/conduitbank.png"
-                  width={30}
-                  height={30}
-                  alt="logo"
-                />
-              </Link> */}
           <div className="flex h-16 pt-10 shrink-0 items-center pl-12">
             <Link href="/">
               <Image
@@ -58,7 +116,11 @@ const AuthForm = ({ type }: { type: string }) => {
 
         <div className="mt-10">
           <div>
-            <form action="#" method="POST" className="space-y-6">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              method="POST"
+              className="space-y-6"
+            >
               {type === "sign-up" && (
                 <>
                   {/* new user name input  */}
@@ -74,6 +136,9 @@ const AuthForm = ({ type }: { type: string }) => {
                       </label>
                       <div className="mt-2">
                         <input
+                          {...register("firstname", {
+                            required: "First name is required",
+                          })}
                           id="firstname"
                           name="firstname"
                           type="firstname"
@@ -82,6 +147,9 @@ const AuthForm = ({ type }: { type: string }) => {
                           placeholder="Geva-eval"
                           className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                         />
+                        <p className="text-red-500">
+                          {errors.firstname?.message}
+                        </p>
                       </div>
                     </div>
 
@@ -94,6 +162,9 @@ const AuthForm = ({ type }: { type: string }) => {
                       </label>
                       <div className="mt-2">
                         <input
+                          {...register("lastname", {
+                            required: "Last name is required",
+                          })}
                           id="lastname"
                           name="lastname"
                           type="lastname"
@@ -102,6 +173,9 @@ const AuthForm = ({ type }: { type: string }) => {
                           placeholder="Egbe"
                           className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                         />
+                        <p className="text-red-500">
+                          {errors.lastname?.message}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -114,6 +188,9 @@ const AuthForm = ({ type }: { type: string }) => {
                     </label>
                     <div className="mt-2">
                       <input
+                        {...register("address", {
+                          required: "address is required",
+                        })}
                         id="address"
                         name="address"
                         type="address"
@@ -122,6 +199,7 @@ const AuthForm = ({ type }: { type: string }) => {
                         placeholder="Address"
                         className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                       />
+                      <p className="text-red-500">{errors.address?.message}</p>
                     </div>
                   </div>
 
@@ -135,14 +213,18 @@ const AuthForm = ({ type }: { type: string }) => {
                       </label>
                       <div className="mt-2">
                         <input
+                          {...register("state", {
+                            required: "State is required",
+                          })}
                           id="state"
-                          name="State"
-                          type="sate"
+                          name="state"
+                          type="state"
                           required
                           autoComplete="state"
                           placeholder="State"
                           className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                         />
+                        <p className="text-red-500">{errors.state?.message}</p>
                       </div>
                     </div>
 
@@ -155,6 +237,9 @@ const AuthForm = ({ type }: { type: string }) => {
                       </label>
                       <div className="mt-2">
                         <input
+                          {...register("code", {
+                            required: "code is required",
+                          })}
                           id="code"
                           name="code"
                           type="code"
@@ -163,6 +248,7 @@ const AuthForm = ({ type }: { type: string }) => {
                           placeholder="ex:11101"
                           className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                         />
+                        <p className="text-red-500">{errors.code?.message}</p>
                       </div>
                     </div>
                   </div>
@@ -177,6 +263,9 @@ const AuthForm = ({ type }: { type: string }) => {
                       </label>
                       <div className="mt-2">
                         <input
+                          {...register("dob", {
+                            required: "date of birth is required",
+                          })}
                           id="dob"
                           name="dob"
                           type="dob"
@@ -185,6 +274,7 @@ const AuthForm = ({ type }: { type: string }) => {
                           placeholder="yyyy-mm-dd"
                           className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                         />
+                        <p className="text-red-500">{errors.dob?.message}</p>
                       </div>
                     </div>
 
@@ -197,6 +287,7 @@ const AuthForm = ({ type }: { type: string }) => {
                       </label>
                       <div className="mt-2">
                         <input
+                          {...register("ssn", { required: "ssn is required" })}
                           id="ssn"
                           name="ssn"
                           type="ssn"
@@ -205,6 +296,7 @@ const AuthForm = ({ type }: { type: string }) => {
                           placeholder="123-45-6789"
                           className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                         />
+                        <p className="text-red-500">{errors.ssn?.message}</p>
                       </div>
                     </div>
                   </div>
@@ -220,6 +312,7 @@ const AuthForm = ({ type }: { type: string }) => {
                 </label>
                 <div className="mt-2">
                   <input
+                    {...register("email", { required: "email is required" })}
                     id="email"
                     name="email"
                     type="email"
@@ -228,6 +321,7 @@ const AuthForm = ({ type }: { type: string }) => {
                     placeholder="example@gmail.com"
                     className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                   />
+                  <p className="text-red-500">{errors.email?.message}</p>
                 </div>
               </div>
 
@@ -240,6 +334,13 @@ const AuthForm = ({ type }: { type: string }) => {
                 </label>
                 <div className="mt-2 ">
                   <input
+                    {...register("password", {
+                      required: "password is required",
+                      minLength: {
+                        value: 8,
+                        message: "Password must be at least 8 characters long",
+                      },
+                    })}
                     id="password"
                     name="password"
                     type="password"
@@ -248,6 +349,7 @@ const AuthForm = ({ type }: { type: string }) => {
                     placeholder="********"
                     className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                   />
+                  <p className="text-red-500">{errors.password?.message}</p>
                 </div>
               </div>
 
@@ -277,17 +379,41 @@ const AuthForm = ({ type }: { type: string }) => {
                 </div>
               </div>
 
-              <div>
-                <button
-                  type="submit"
-                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Sign in
-                </button>
-              </div>
+              {type === "sign-up" ? (
+                <div>
+                  <button
+                    disabled={isLoading}
+                    type="submit"
+                    className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  >
+                    Create account{" "}
+                    {isLoading && (
+                      <div className="flex items-center px-2">
+                        <Loader2 size={20} className="animate-spin " /> &nbsp;
+                        Loading...
+                      </div>
+                    )}
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <button
+                    type="submit"
+                    className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  >
+                    Sign in{" "}
+                    {isLoading && (
+                      <div className="flex items-center px-2">
+                        <Loader2 size={20} className="animate-spin " /> &nbsp;
+                        Loading...
+                      </div>
+                    )}
+                  </button>
+                </div>
+              )}
             </form>
           </div>
-
+          {/* 
           <div className="mt-10">
             <div className="relative">
               <div
@@ -348,7 +474,7 @@ const AuthForm = ({ type }: { type: string }) => {
                 <span className="text-sm/6 font-semibold">GitHub</span>
               </a>
             </div>
-          </div>
+          </div> */}
           {type === "sign-in" ? (
             <div className="relative mt-6">
               <p className="mt-2 text-sm/6 text-gray-500">
@@ -362,7 +488,7 @@ const AuthForm = ({ type }: { type: string }) => {
               </p>
             </div>
           ) : (
-            <div className="relative mt-6">
+            <div className="relative mt-6 mb-6">
               <p className="mt-2 text-sm/6 text-gray-500">
                 If you already have an account?{" "}
                 <Link
