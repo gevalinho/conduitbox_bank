@@ -53,7 +53,7 @@ type FormValues = z.infer<typeof signUpSchema>;
 
 const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
   const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Use react-hook-form with zodResolver based on the form type
   const {
@@ -65,12 +65,64 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
     resolver: zodResolver(type === "sign-in" ? signInSchema : signUpSchema),
   });
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setIsLoading(true);
-    console.log("Form Data:", data);
+    // console.log("Form Data:", data);
     // Handle form submission logic here (e.g., API calls)
-    reset();
-    setIsLoading(false);
+    try {
+      if (type === "sign-up") {
+        const userData = {
+          firstname: data.firstname,
+          lastname: data.lastname,
+          address: data.address,
+          state: data.state,
+          code: data.code,
+          dob: data.dob,
+          ssn: data.ssn,
+          email: data.email,
+          password: data.password,
+        };
+        const response = await fetch("http://localhost:3000/api/signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userData),
+        });
+        if (response.ok) {
+          const user = await response.json();
+          setUser(user);
+          console.log("User registered:", user);
+        } else {
+          console.error("Registration failed");
+        }
+      }
+      if (type === "sign-in") {
+        const userData = {
+          email: data.email,
+          password: data.password,
+        };
+        const response = await fetch("http://localhost:3000/api/signin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userData),
+        });
+        if (response.ok) {
+          const user = await response.json();
+          setUser(user);
+          console.log("User signed in:", user);
+        } else {
+          console.error("Sign in failed");
+        }
+      }
+    } catch (error) {
+      console.log("Form Data:", error);
+    } finally {
+      reset();
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -399,6 +451,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
               ) : (
                 <div>
                   <button
+                    disabled={isLoading}
                     type="submit"
                     className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
