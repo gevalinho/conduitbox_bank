@@ -6,6 +6,9 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import { PasswordHash } from "node-appwrite";
+import { useRouter } from "next/navigation";
+import { signIn, signUp } from "@/lib/actions/user.actions";
 // import { FieldErrors } from "react-hook-form";
 // import { authFormSchema } from "@/lib/utils";
 
@@ -36,7 +39,7 @@ const signInSchema = z.object({
 const signUpSchema = z.object({
   firstname: z.string().nonempty("First name is required"),
   lastname: z.string().nonempty("Last name is required"),
-  address: z.string().nonempty("Address is required"),
+  address1: z.string().nonempty("Address is required"),
   state: z.string().nonempty("Country is required"),
   code: z.string().regex(/^\d+$/, "Postal code must be numeric"),
   dob: z.string().nonempty("Date of birth is required"),
@@ -54,6 +57,7 @@ type FormValues = z.infer<typeof signUpSchema>;
 const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   // Use react-hook-form with zodResolver based on the form type
   const {
@@ -71,51 +75,15 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
     // Handle form submission logic here (e.g., API calls)
     try {
       if (type === "sign-up") {
-        const userData = {
-          firstname: data.firstname,
-          lastname: data.lastname,
-          address: data.address,
-          state: data.state,
-          code: data.code,
-          dob: data.dob,
-          ssn: data.ssn,
-          email: data.email,
-          password: data.password,
-        };
-        const response = await fetch("http://localhost:3000/api/signup", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userData),
-        });
-        if (response.ok) {
-          const user = await response.json();
-          setUser(user);
-          console.log("User registered:", user);
-        } else {
-          console.error("Registration failed");
-        }
+        const newUser = await signUp(data);
+        setUser(newUser);
       }
       if (type === "sign-in") {
-        const userData = {
+        const response = await signIn({
           email: data.email,
-          password: data.password,
-        };
-        const response = await fetch("http://localhost:3000/api/signin", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userData),
+          PasswordHash: data.password,
         });
-        if (response.ok) {
-          const user = await response.json();
-          setUser(user);
-          console.log("User signed in:", user);
-        } else {
-          console.error("Sign in failed");
-        }
+        if (response) router.push("/");
       }
     } catch (error) {
       console.log("Form Data:", error);
@@ -241,7 +209,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
                     </label>
                     <div className="mt-2">
                       <input
-                        {...register("address", {
+                        {...register("address1", {
                           required: "address is required",
                         })}
                         id="address"
@@ -252,7 +220,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
                         placeholder="Address"
                         className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                       />
-                      <p className="text-red-500">{errors.address?.message}</p>
+                      <p className="text-red-500">{errors.address1?.message}</p>
                     </div>
                   </div>
 
