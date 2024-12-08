@@ -6,9 +6,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { PasswordHash } from "node-appwrite";
 import { useRouter } from "next/navigation";
-import { signIn, signUp } from "@/lib/actions/user.actions";
+import { getLoggedInUser, signIn, signUp } from "@/lib/actions/user.actions";
 // import { FieldErrors } from "react-hook-form";
 // import { authFormSchema } from "@/lib/utils";
 
@@ -37,9 +36,10 @@ const signInSchema = z.object({
 });
 
 const signUpSchema = z.object({
-  firstname: z.string().nonempty("First name is required"),
-  lastname: z.string().nonempty("Last name is required"),
-  address1: z.string().nonempty("Address is required"),
+  firstName: z.string().nonempty("First name is required"),
+  lastName: z.string().nonempty("Last name is required"),
+  address: z.string().nonempty("Address is required"),
+  city: z.string().nonempty("City is required"),
   state: z.string().nonempty("Country is required"),
   code: z.string().regex(/^\d+$/, "Postal code must be numeric"),
   dob: z.string().nonempty("Date of birth is required"),
@@ -81,7 +81,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
       if (type === "sign-in") {
         const response = await signIn({
           email: data.email,
-          PasswordHash: data.password,
+          password: data.password,
         });
         if (response) router.push("/");
       }
@@ -135,307 +135,343 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
               </p> */}
         </div>
 
-        <div className="mt-10">
-          <div>
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              method="POST"
-              className="space-y-6"
-            >
-              {type === "sign-up" && (
-                <>
-                  {/* new user name input  */}
-
-                  {/* end of code */}
-                  <div className="flex gap-2 w-full">
-                    <div className="w-full">
-                      <label
-                        htmlFor="email"
-                        className="block text-sm/6 font-medium text-gray-900"
-                      >
-                        FirstName
-                      </label>
-                      <div className="mt-2">
-                        <input
-                          {...register("firstname", {
-                            required: "First name is required",
-                          })}
-                          id="firstname"
-                          name="firstname"
-                          type="firstname"
-                          required
-                          autoComplete="firstname"
-                          placeholder="Geva-eval"
-                          className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-                        />
-                        <p className="text-red-500">
-                          {errors.firstname?.message}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="w-full">
-                      <label
-                        htmlFor="lastname"
-                        className="block text-sm/6 font-medium text-gray-900"
-                      >
-                        LastName
-                      </label>
-                      <div className="mt-2">
-                        <input
-                          {...register("lastname", {
-                            required: "Last name is required",
-                          })}
-                          id="lastname"
-                          name="lastname"
-                          type="lastname"
-                          required
-                          autoComplete="lastname"
-                          placeholder="Egbe"
-                          className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-                        />
-                        <p className="text-red-500">
-                          {errors.lastname?.message}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="address"
-                      className="block text-sm/6 font-medium text-gray-900"
-                    >
-                      Street address
-                    </label>
-                    <div className="mt-2">
-                      <input
-                        {...register("address1", {
-                          required: "address is required",
-                        })}
-                        id="address"
-                        name="address"
-                        type="address"
-                        required
-                        autoComplete="address"
-                        placeholder="Address"
-                        className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-                      />
-                      <p className="text-red-500">{errors.address1?.message}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2 w-full">
-                    <div className="w-full">
-                      <label
-                        htmlFor="state"
-                        className="block text-sm/6 font-medium text-gray-900"
-                      >
-                        State
-                      </label>
-                      <div className="mt-2">
-                        <input
-                          {...register("state", {
-                            required: "State is required",
-                          })}
-                          id="state"
-                          name="state"
-                          type="state"
-                          required
-                          autoComplete="state"
-                          placeholder="State"
-                          className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-                        />
-                        <p className="text-red-500">{errors.state?.message}</p>
-                      </div>
-                    </div>
-
-                    <div className="w-full">
-                      <label
-                        htmlFor="code"
-                        className="block text-sm/6 font-medium text-gray-900"
-                      >
-                        Postal Code
-                      </label>
-                      <div className="mt-2">
-                        <input
-                          {...register("code", {
-                            required: "code is required",
-                          })}
-                          id="code"
-                          name="code"
-                          type="code"
-                          required
-                          autoComplete="postal code"
-                          placeholder="ex:11101"
-                          className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-                        />
-                        <p className="text-red-500">{errors.code?.message}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2 w-full">
-                    <div className="w-full">
-                      <label
-                        htmlFor="date"
-                        className="block text-sm/6 font-medium text-gray-900"
-                      >
-                        Date of birth
-                      </label>
-                      <div className="mt-2">
-                        <input
-                          {...register("dob", {
-                            required: "date of birth is required",
-                          })}
-                          id="dob"
-                          name="dob"
-                          type="dob"
-                          required
-                          autoComplete="dob"
-                          placeholder="yyyy-mm-dd"
-                          className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-                        />
-                        <p className="text-red-500">{errors.dob?.message}</p>
-                      </div>
-                    </div>
-
-                    <div className="w-full">
-                      <label
-                        htmlFor="ssn"
-                        className="block text-sm/6 font-medium text-gray-900"
-                      >
-                        SSN
-                      </label>
-                      <div className="mt-2">
-                        <input
-                          {...register("ssn", { required: "ssn is required" })}
-                          id="ssn"
-                          name="ssn"
-                          type="ssn"
-                          required
-                          autoComplete="ssn"
-                          placeholder="123-45-6789"
-                          className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-                        />
-                        <p className="text-red-500">{errors.ssn?.message}</p>
-                      </div>
-                    </div>
-                  </div>
-                </>
-              )}
-
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm/6 font-medium text-gray-900"
-                >
-                  Email address
-                </label>
-                <div className="mt-2">
-                  <input
-                    {...register("email", { required: "email is required" })}
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    autoComplete="email"
-                    placeholder="example@gmail.com"
-                    className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-                  />
-                  <p className="text-red-500">{errors.email?.message}</p>
-                </div>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm/6 font-medium text-gray-900"
-                >
-                  Password
-                </label>
-                <div className="mt-2 ">
-                  <input
-                    {...register("password", {
-                      required: "password is required",
-                      minLength: {
-                        value: 8,
-                        message: "Password must be at least 8 characters long",
-                      },
-                    })}
-                    id="password"
-                    name="password"
-                    type="password"
-                    required
-                    autoComplete="current-password"
-                    placeholder="********"
-                    className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-                  />
-                  <p className="text-red-500">{errors.password?.message}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <input
-                    id="remember-me"
-                    name="remember-me"
-                    type="checkbox"
-                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                  />
-                  <label
-                    htmlFor="remember-me"
-                    className="ml-3 block text-sm/6 text-gray-700"
-                  >
-                    Remember me
-                  </label>
-                </div>
-
-                <div className="text-sm/6">
-                  <a
-                    href="#"
-                    className="font-semibold text-indigo-600 hover:text-indigo-500"
-                  >
-                    Forgot password?
-                  </a>
-                </div>
-              </div>
-
-              {type === "sign-up" ? (
-                <div>
-                  <button
-                    disabled={isLoading}
-                    type="submit"
-                    className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                  >
-                    <span hidden={isLoading}>Create account </span>
-                    {isLoading && (
-                      <div className="flex items-center px-2">
-                        <Loader2 size={20} className="animate-spin " /> &nbsp;
-                        Loading...
-                      </div>
-                    )}
-                  </button>
-                </div>
-              ) : (
-                <div>
-                  <button
-                    disabled={isLoading}
-                    type="submit"
-                    className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                  >
-                    <span hidden={isLoading}>Sign in </span>
-                    {isLoading && (
-                      <div className="flex items-center px-2">
-                        <Loader2 size={20} className="animate-spin " /> &nbsp;
-                        Loading...
-                      </div>
-                    )}
-                  </button>
-                </div>
-              )}
-            </form>
+        {user ? (
+          <div className="flex flex-col gap-4">
+            Link you account to continue
           </div>
-          {/* 
+        ) : (
+          <div className="mt-10">
+            <div>
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                method="POST"
+                className="space-y-6"
+              >
+                {type === "sign-up" && (
+                  <>
+                    {/* new user name input  */}
+
+                    {/* end of code */}
+                    <div className="flex gap-2 w-full">
+                      <div className="w-full">
+                        <label
+                          htmlFor="email"
+                          className="block text-sm/6 font-medium text-gray-900"
+                        >
+                          FirstName
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            {...register("firstName", {
+                              required: "First name is required",
+                            })}
+                            id="firstName"
+                            name="firstName"
+                            type="firstName"
+                            required
+                            autoComplete="firstname"
+                            placeholder="Geva-eval"
+                            className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                          />
+                          <p className="text-red-500">
+                            {errors.firstName?.message}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="w-full">
+                        <label
+                          htmlFor="lastname"
+                          className="block text-sm/6 font-medium text-gray-900"
+                        >
+                          LastName
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            {...register("lastName", {
+                              required: "Last name is required",
+                            })}
+                            id="lastName"
+                            name="lastName"
+                            type="lastName"
+                            required
+                            autoComplete="lastname"
+                            placeholder="Egbe"
+                            className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                          />
+                          <p className="text-red-500">
+                            {errors.lastName?.message}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="address"
+                        className="block text-sm/6 font-medium text-gray-900"
+                      >
+                        Street address
+                      </label>
+                      <div className="mt-2">
+                        <input
+                          {...register("address", {
+                            required: "address is required",
+                          })}
+                          id="address"
+                          name="address"
+                          type="address"
+                          required
+                          autoComplete="address"
+                          placeholder="Address"
+                          className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                        />
+                        <p className="text-red-500">
+                          {errors.address?.message}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="address"
+                        className="block text-sm/6 font-medium text-gray-900"
+                      >
+                        City
+                      </label>
+                      <div className="mt-2">
+                        <input
+                          {...register("city", {
+                            required: "address is required",
+                          })}
+                          id="city"
+                          name="city"
+                          type="city"
+                          required
+                          autoComplete="city"
+                          placeholder="city"
+                          className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                        />
+                        <p className="text-red-500">{errors.city?.message}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2 w-full">
+                      <div className="w-full">
+                        <label
+                          htmlFor="state"
+                          className="block text-sm/6 font-medium text-gray-900"
+                        >
+                          State
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            {...register("state", {
+                              required: "State is required",
+                            })}
+                            id="state"
+                            name="state"
+                            type="state"
+                            required
+                            autoComplete="state"
+                            placeholder="State"
+                            className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                          />
+                          <p className="text-red-500">
+                            {errors.state?.message}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="w-full">
+                        <label
+                          htmlFor="code"
+                          className="block text-sm/6 font-medium text-gray-900"
+                        >
+                          Postal Code
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            {...register("code", {
+                              required: "code is required",
+                            })}
+                            id="code"
+                            name="code"
+                            type="code"
+                            required
+                            autoComplete="postal code"
+                            placeholder="ex:11101"
+                            className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                          />
+                          <p className="text-red-500">{errors.code?.message}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2 w-full">
+                      <div className="w-full">
+                        <label
+                          htmlFor="date"
+                          className="block text-sm/6 font-medium text-gray-900"
+                        >
+                          Date of birth
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            {...register("dob", {
+                              required: "date of birth is required",
+                            })}
+                            id="dob"
+                            name="dob"
+                            type="dob"
+                            required
+                            autoComplete="dob"
+                            placeholder="yyyy-mm-dd"
+                            className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                          />
+                          <p className="text-red-500">{errors.dob?.message}</p>
+                        </div>
+                      </div>
+
+                      <div className="w-full">
+                        <label
+                          htmlFor="ssn"
+                          className="block text-sm/6 font-medium text-gray-900"
+                        >
+                          SSN
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            {...register("ssn", {
+                              required: "ssn is required",
+                            })}
+                            id="ssn"
+                            name="ssn"
+                            type="ssn"
+                            required
+                            autoComplete="ssn"
+                            placeholder="123-45-6789"
+                            className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                          />
+                          <p className="text-red-500">{errors.ssn?.message}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block text-sm/6 font-medium text-gray-900"
+                  >
+                    Email address
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      {...register("email", { required: "email is required" })}
+                      id="email"
+                      name="email"
+                      type="email"
+                      required
+                      autoComplete="email"
+                      placeholder="example@gmail.com"
+                      className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                    />
+                    <p className="text-red-500">{errors.email?.message}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="password"
+                    className="block text-sm/6 font-medium text-gray-900"
+                  >
+                    Password
+                  </label>
+                  <div className="mt-2 ">
+                    <input
+                      {...register("password", {
+                        required: "password is required",
+                        minLength: {
+                          value: 8,
+                          message:
+                            "Password must be at least 8 characters long",
+                        },
+                      })}
+                      id="password"
+                      name="password"
+                      type="password"
+                      required
+                      autoComplete="current-password"
+                      placeholder="********"
+                      className="block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                    />
+                    <p className="text-red-500">{errors.password?.message}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <input
+                      id="remember-me"
+                      name="remember-me"
+                      type="checkbox"
+                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                    />
+                    <label
+                      htmlFor="remember-me"
+                      className="ml-3 block text-sm/6 text-gray-700"
+                    >
+                      Remember me
+                    </label>
+                  </div>
+
+                  <div className="text-sm/6">
+                    <a
+                      href="#"
+                      className="font-semibold text-indigo-600 hover:text-indigo-500"
+                    >
+                      Forgot password?
+                    </a>
+                  </div>
+                </div>
+
+                {type === "sign-up" ? (
+                  <div>
+                    <button
+                      disabled={isLoading}
+                      type="submit"
+                      className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    >
+                      <span hidden={isLoading}>Create account </span>
+                      {isLoading && (
+                        <div className="flex items-center px-2">
+                          <Loader2 size={20} className="animate-spin " /> &nbsp;
+                          Loading...
+                        </div>
+                      )}
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <button
+                      disabled={isLoading}
+                      type="submit"
+                      className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    >
+                      <span hidden={isLoading}>Sign in </span>
+                      {isLoading && (
+                        <div className="flex items-center px-2">
+                          <Loader2 size={20} className="animate-spin " /> &nbsp;
+                          Loading...
+                        </div>
+                      )}
+                    </button>
+                  </div>
+                )}
+              </form>
+            </div>
+            {/* 
           <div className="mt-10">
             <div className="relative">
               <div
@@ -497,32 +533,33 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
               </a>
             </div>
           </div> */}
-          {type === "sign-in" ? (
-            <div className="relative mt-6">
-              <p className="mt-2 text-sm/6 text-gray-500">
-                Don&apos;t have an account?{" "}
-                <Link
-                  href="/sign-up"
-                  className="font-semibold text-indigo-600 hover:text-indigo-500"
-                >
-                  SignUp
-                </Link>
-              </p>
-            </div>
-          ) : (
-            <div className="relative mt-6 mb-6">
-              <p className="mt-2 text-sm/6 text-gray-500">
-                If you already have an account?{" "}
-                <Link
-                  href="/sign-in"
-                  className="font-semibold text-indigo-600 hover:text-indigo-500"
-                >
-                  SignIn
-                </Link>
-              </p>
-            </div>
-          )}
-        </div>
+            {type === "sign-in" ? (
+              <div className="relative mt-6">
+                <p className="mt-2 text-sm/6 text-gray-500">
+                  Don&apos;t have an account?{" "}
+                  <Link
+                    href="/sign-up"
+                    className="font-semibold text-indigo-600 hover:text-indigo-500"
+                  >
+                    SignUp
+                  </Link>
+                </p>
+              </div>
+            ) : (
+              <div className="relative mt-6 mb-6">
+                <p className="mt-2 text-sm/6 text-gray-500">
+                  If you already have an account?{" "}
+                  <Link
+                    href="/sign-in"
+                    className="font-semibold text-indigo-600 hover:text-indigo-500"
+                  >
+                    SignIn
+                  </Link>
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
