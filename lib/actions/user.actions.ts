@@ -4,6 +4,7 @@ import { ID } from "node-appwrite";
 import { createAdminClient, createSessionClient } from "../server/appwrite";
 import { cookies } from "next/headers";
 import { parseStringify } from "../utils";
+import { redirect, useRouter } from "next/navigation";
 
 export const signUp = async (userData: SignUpParams) => {
   try {
@@ -23,7 +24,7 @@ export const signUp = async (userData: SignUpParams) => {
     );
     const session = await account.createEmailPasswordSession(email, password);
 
-    cookies().set("appwrite-session", session.secret, {
+    (await cookies()).set("appwrite-session", session.secret, {
       path: "/",
       httpOnly: true,
       sameSite: "strict",
@@ -41,7 +42,7 @@ export const signIn = async ({ email, password }: SignUpParams) => {
     const { account } = await createAdminClient();
     const session = await account.createEmailPasswordSession(email, password);
 
-    cookies().set("appwrite-session", session.secret, {
+    (await cookies()).set("appwrite-session", session.secret, {
       path: "/",
       httpOnly: true,
       sameSite: "strict",
@@ -59,8 +60,23 @@ export const signIn = async ({ email, password }: SignUpParams) => {
 export async function getLoggedInUser() {
   try {
     const { account } = await createSessionClient();
-    return await account.get();
+    const user = await account.get();
+
+    // Redirect to the home page if the user is not logged in
+    return parseStringify(user);
   } catch (error) {
     return error;
   }
 }
+
+export const logoutAccount = async () => {
+  try {
+    const { account } = await createSessionClient();
+
+    (await cookies()).delete("appwrite-session");
+
+    await account.deleteSession("current");
+  } catch (error) {
+    return error;
+  }
+};

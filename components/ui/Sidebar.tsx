@@ -20,7 +20,8 @@ import {
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { logoutAccount } from "@/lib/actions/user.actions";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -63,6 +64,15 @@ const Sidebar = ({ user }: SiderbarProps) => {
     { id: 2, name: "Tailwind Labs", href: "#", initial: "T", current: false },
     { id: 3, name: "Workcation", href: "#", initial: "W", current: false },
   ];
+
+  const router = useRouter();
+  const handleLoggedOut = async () => {
+    const loggedOut = await logoutAccount();
+    if (loggedOut) {
+      router.push("/sign-in");
+    }
+  };
+
   return (
     <>
       <nav className="flex flex-col gap-4">
@@ -265,20 +275,39 @@ const Sidebar = ({ user }: SiderbarProps) => {
                   </ul>
                 </li>
                 <li className="-mx-6 mt-auto">
-                  <a
+                  {/* <a
                     href="#"
                     className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50"
-                  >
-                    <img
+                  > */}
+                  {/* <img
                       alt=""
                       src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                       className="h-8 w-8 rounded-full bg-gray-50"
-                    />
-                    <span className="sr-only">Your profile</span>
-                    <span aria-hidden="true">
-                      {user.firstName} {user.lastName}
-                    </span>
-                  </a>
+                    /> */}
+                  <div className="footer ">
+                    <div className="flex gap-2 items-center">
+                      <div className="footer_name">
+                        <span className="text-xl font-bold text-blue-500">
+                          {user.name[0]}
+                        </span>
+                      </div>
+                      <span className="sr-only">Your profile</span>
+                      <div>
+                        <span aria-hidden="true" className="font-bold ">
+                          {user.lastName} {user.name}
+                        </span>
+                        <p className="text-14 truncate font-normal text-gray-500">
+                          {user.email}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="footer_image" onClick={handleLoggedOut}>
+                      <Image src="icons/logout.svg" fill alt="logout" />
+                    </div>
+                  </div>
+
+                  {/* </a> */}
                 </li>
               </ul>
             </nav>

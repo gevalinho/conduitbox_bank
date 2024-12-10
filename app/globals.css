@@ -171,6 +171,10 @@
     @apply flex-center absolute -top-8 size-24 rounded-full bg-gray-100 border-8 border-white p-2 shadow-profile;
   }
 
+  .profile-footer-img {
+    @apply flex-center  size-3 rounded-full bg-gray-100 border-8 border-white p-2  shadow-profile;
+  }
+
   .profile-details {
     @apply flex flex-col pt-24;
   }
@@ -337,7 +341,7 @@
 
   /* Footer */
   .footer {
-    @apply flex cursor-pointer items-center justify-between gap-2 py-6;
+    @apply flex  items-center justify-between gap-2 py-6 mr-4 ml-4;
   }
 
   .footer_name {
@@ -361,7 +365,7 @@
   }
 
   .footer_image-mobile {
-    @apply relative size-5;
+    @apply relative size-5 cursor-pointer;
   }
 
   /* Sidebar */
